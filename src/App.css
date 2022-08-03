@@ -15,3 +15,27 @@
   height: 100vh;
   background-color: lightsteelblue;
 }
+.style2{
+  border-radius: 5px;
+}
+
+.style3{
+  color: blue;
+  font-size: 17px;
+}
+.style4{
+  color: #e65100;
+}
+.style5{
+  width: 100px;
+}
+.style6{
+  color: orange;
+}
+.style7{
+  color: red;
+}
+.style8{
+  text-decoration: line-through;
+  color: red;
+}
