@@ -9,6 +9,11 @@ function Products() {
     const [Availability, setAvailability] = useState();
     const [ProductId, setProductId] = useState('')
     const [ProductUID, setProductUID] = useState('')
+    const [UpdateId, setUpdateId] = useState('');
+
+    const [Product, setProduct] = useState('');
+    
+
 
     const navigate = useNavigate()
 
@@ -61,24 +66,53 @@ function Products() {
         var trig = M.Modal.init(elems, {});
     }
 
+    const trigg = () => {
+        var elems = document.querySelectorAll('.modal');
+        var trig = M.Modal.init(elems, {});
+    }
+
+
+    const HandleChange = (e) => {
+        const id = e.target.id;
+        const values = e.target.value;
+    
+        setProduct((prevState) => ({
+            ...prevState,
+            [id]: values,
+        }))
+    }
 
     const DeleteProduct = (e) => {
         e.preventDefault();
 
-        const pk = {
-            productId : ProductUID
-        }
-
-        axios.post("http://localhost:2022/admin/product/delete",pk).then((data) => {
+        axios.post(`http://localhost:2022/admin/product/delete/${ProductUID}`).then((data) => {
             console.log(data)
-            if(data.data.status === 1){
+            if (data.data.status === 1) {
                 alert(data.data.message)
                 GetProductData();
-            }else{
+            } else {
                 alert('something went to wrong!!!')
             }
         })
     }
+
+
+    const HandleUpdate = (e) => {
+        e.preventDefault();
+
+        axios.post(`http://localhost:2022/admin/product/update/${UpdateId}`,Product).then((data) => {
+            console.log(data)
+
+            if(data.data.status === 1) {
+                alert(data.data.message)
+                GetProductData();
+            }
+            else{
+                alert("Product Doesn't Update")
+            }
+        })
+    }
+
 
     // const posted1 = (e) => {
     //     var elems = document.querySelectorAll('.tabs');
@@ -115,11 +149,12 @@ function Products() {
                                     <div class="card-image">
                                         <img src={`http://localhost:2022/${datas.photo}`} style={{ width: "300px", height: "200px" }} className='responsive-img' />
                                         <a class="btn-floating halfway-fab waves-effect orange darken-3 modal-trigger" data-target="change2" onClick={(e) => {
-                                            setProductUID(datas.productId)
+                                            setProductUID(datas._id)
                                             geter();
                                         }}><i class="material-icons">cancel</i></a>
                                     </div>
                                     <div class="card-content">
+
                                         <p className='style3'>Product Name :{datas.name}</p>
                                         <p className='style3'>Prize :&nbsp; Rs.&nbsp;<span className='style8'>{datas.prize}</span> /-- </p>
                                         <p className='style3'>OfferPrize :&nbsp;Rs. &nbsp;{datas.offerprize} /--</p>
@@ -139,7 +174,16 @@ function Products() {
                                         <hr />
                                     </div>
                                     <div class="card-action center">
-                                        <button className='btn grey darken-4 style5'>Update</button>
+                                        <button className='btn grey modal-trigger darken-4 style5' data-target="change3" onClick={() => {
+                                            setUpdateId(datas._id);
+                                            setProduct({
+                                                catagroy : datas.catagroy,
+                                                name : datas.name,
+                                                prize : datas.prize,
+                                                offerprize : datas.offerprize,
+                                            })
+                                            trigg();
+                                        }}>Update</button>
                                     </div>
                                 </div>
 
@@ -152,7 +196,7 @@ function Products() {
                                                 <div className='col s6'>
                                                     <p>
                                                         <label>
-                                                            <input type="checkbox" id="dd" value={true} name="availability" onChange={(e) => setAvailability(e.target.value)} />
+                                                            <input type="checkbox" id="dd" value={true} onChange={(e) => setAvailability(e.target.value)} name="availability" />
                                                             <span>Instock</span>
                                                         </label>
                                                     </p>
@@ -160,7 +204,7 @@ function Products() {
                                                 <div className='col s6'>
                                                     <p>
                                                         <label>
-                                                            <input type="checkbox" id="hh" value={false} name="availability" onChange={(e) => setAvailability(e.target.value)} />
+                                                            <input type="checkbox" id="hh" value={false} onChange={(e) => setAvailability(e.target.value)} name="availability" />
                                                             <span>Outofstock</span>
                                                         </label>
                                                     </p>
@@ -168,7 +212,7 @@ function Products() {
                                             </div>
                                         </div>
                                         <div className="modal-footer cyan lighten-3">
-                                            <button type='submit' className='btn center indigo' onClick={AvailabilityUpdate}>Update</button>
+                                            <button type='submit' className='btn center indigo modal-close' onClick={AvailabilityUpdate} >Update</button>
                                         </div>
                                     </form>
                                 </div>
@@ -178,6 +222,8 @@ function Products() {
                     })}
                 </div>
 
+
+
                 <div id="change2" className="modal lime accent-3 z-depth-4">
                     <form>
                         <div className="modal-content">
@@ -185,7 +231,48 @@ function Products() {
                             <p className='center'>Are You Sure ? you wnat to Delete the Product...!!!</p>
                         </div>
                         <div className="modal-footer lime accent-3 z-depth-4">
-                            <button type='submit' className='btn mod modal-close indigo' onClick={DeleteProduct}>Delete</button>
+                            <button type='submit' className='btn mod  indigo' onClick={DeleteProduct}>Delete</button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="change3" className="modal cyan lighten-3">
+                    <form encType="multipart/form-data" >
+                        <div className="modal-content">
+                            <h4 className='center'>Update Product</h4>
+                            <div className="row">
+
+                                <div className='input-field col s6'>
+                                    <select id='catagroy' className="browser-default cyan lighten-4 style2" value={Product.catagroy} onChange ={HandleChange} name='catagroy' required>
+                                        <option >Select Catagroy</option>
+                                        <option >Mobile</option>
+                                        <option >Shoe</option>
+                                        <option >Shirt</option>
+                                    </select>
+                                </div>
+                                <div className="input-field col s6">
+                                    <input type="text" className="validate" id='name' value={Product.name} onChange ={HandleChange} name="name" required />
+                                    <label for="Adminpassword"></label>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="input-field col s12">
+                                    <input type="text" className="validate" id='prize' value={Product.prize} onChange ={HandleChange}  name="prize"  required />
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="input-field col s12">
+                                    <input type="text" className="validate " id='offerprize' value={Product.offerprize} onChange ={HandleChange} name="offerprize" required />
+                                    <label></label>
+                                </div>
+                            </div>
+                            <input type='file' className='cyan lighten-4' name='photo' id='ss' accept=".png, .jpeg, .jpg" />
+                        </div>
+                        <div className="modal-footer cyan lighten-3">
+                            <button type='submit' className='btn center indigo' onClick={HandleUpdate}>Upload</button>
                         </div>
                     </form>
                 </div>
