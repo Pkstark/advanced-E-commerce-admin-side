@@ -57,7 +57,7 @@ function AdminDashBoard() {
         formData.append('photo', CreateProduct.photo)
 
 
-        axios.post("http://localhost:2022/admin/create/product", formData).then((data) => {
+        axios.post("http://localhost:2022/product/create", formData).then((data) => {
             console.log(data)
             if (data.data.Status === 1) {
                 alert(data.data.message)
@@ -96,14 +96,18 @@ function AdminDashBoard() {
         e.preventDefault();
         navigate('/product')
     }
+
+    const user = (e) => {
+        e.preventDefault();
+        navigate('/adduser')
+    }
     return (
         <div>
             <nav className='orange'>
                 <div className="nav-wrapper container">
                     <a href="" className="brand-logo">DevShip</a>
                     <ul className="right">
-                        <li><a href="">Create User</a></li>
-                        <li><a href="">Form</a></li>
+                        <li><a href="" onClick={user}>AddUser</a></li>
                         <li><a href="" className='modal-trigger' data-target="change" onClick={posted}>Create Product</a></li>
                     </ul>
                 </div>
@@ -170,7 +174,7 @@ function AdminDashBoard() {
                             <div className='col s6'>
                                 <p>
                                     <label>
-                                        <input type="checkbox" id='f' value={true} onChange={HandleChange} name="availability" />
+                                        <input type="checkbox" id='f' value="true" onChange={HandleChange} name="availability" />
                                         <span>Instock</span>
                                     </label>
                                 </p>
@@ -178,7 +182,7 @@ function AdminDashBoard() {
                             <div className='col s6'>
                                 <p>
                                     <label>
-                                        <input type="checkbox" id='s' value={false} onChange={HandleChange} name="availability" />
+                                        <input type="checkbox" id='s' value="false" onChange={HandleChange} name="availability" />
                                         <span>Outofstock</span>
                                     </label>
                                 </p>

@@ -114,16 +114,6 @@ function Products() {
     }
 
 
-    // const posted1 = (e) => {
-    //     var elems = document.querySelectorAll('.tabs');
-    //     var tt = M.Tabs.init(elems, {})
-    // }
-
-    // const posted2 = (e) => {
-    //     var elems = document.querySelectorAll('.tabs');
-    //     var tt = M.Tabs.init(elems, {})
-    // }
-
     return (
         <div>
             <nav className='orange'>
@@ -162,7 +152,7 @@ function Products() {
 
                                         <div className='row'>
                                             <div className='col s6'>
-                                                <p className='style3 left'>{datas.availability === true ? (<div style={{ color: "green" }}>Instock</div>) : (<div style={{ color: "red" }}>OutOfStock</div>)}</p>
+                                                <p className='style3 left'>{datas.availability === "true" ? (<div style={{ color: "green" }}>Instock</div>) : (<div style={{ color: "red" }}>OutOfStock</div>)}</p>
                                             </div>
                                             <div className='col s6'>
                                                 <button className='btn modal-trigger green accent-4' data-target="change1" onClick={(e) => {
@@ -171,7 +161,7 @@ function Products() {
                                                 }}>Change</button>
                                             </div>
                                         </div>
-                                        <hr />
+                                        <hr/>
                                     </div>
                                     <div class="card-action center">
                                         <button className='btn grey modal-trigger darken-4 style5' data-target="change3" onClick={() => {
@@ -187,7 +177,6 @@ function Products() {
                                     </div>
                                 </div>
 
-
                                 <div id="change1" className="modal cyan lighten-3">
                                     <form encType="multipart/form-data" >
                                         <div className="modal-content">
@@ -196,7 +185,7 @@ function Products() {
                                                 <div className='col s6'>
                                                     <p>
                                                         <label>
-                                                            <input type="checkbox" id="dd" value={true} onChange={(e) => setAvailability(e.target.value)} name="availability" />
+                                                            <input type="checkbox" id="dd" value= "true" onChange={(e) => setAvailability(e.target.value)} name="availability" />
                                                             <span>Instock</span>
                                                         </label>
                                                     </p>
@@ -204,7 +193,7 @@ function Products() {
                                                 <div className='col s6'>
                                                     <p>
                                                         <label>
-                                                            <input type="checkbox" id="hh" value={false} onChange={(e) => setAvailability(e.target.value)} name="availability" />
+                                                            <input type="checkbox" id="hh" value="false" onChange={(e) => setAvailability(e.target.value)} name="availability" />
                                                             <span>Outofstock</span>
                                                         </label>
                                                     </p>
@@ -216,7 +205,6 @@ function Products() {
                                         </div>
                                     </form>
                                 </div>
-
                             </div>
                         </div>)
                     })}
