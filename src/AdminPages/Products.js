@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Pagination } from 'antd';
 
 function Products() {
 
@@ -12,8 +13,12 @@ function Products() {
     const [UpdateId, setUpdateId] = useState('');
 
     const [Product, setProduct] = useState('');
-    
 
+    const [searchTerm, setsearchTerm] = useState('');
+
+    const [total, settotal] = useState("");
+    const [page, setpage] = useState(1);
+    const [postPerPage, setpostPerPage] = useState(4);
 
     const navigate = useNavigate()
 
@@ -26,6 +31,7 @@ function Products() {
         axios.post("http://localhost:2022/admin/products").then((data) => {
             console.log(data);
             setProductData(data.data)
+            settotal(data.data.length)
         }).catch((err) => {
             console.log(err)
         })
@@ -75,7 +81,7 @@ function Products() {
     const HandleChange = (e) => {
         const id = e.target.id;
         const values = e.target.value;
-    
+
         setProduct((prevState) => ({
             ...prevState,
             [id]: values,
@@ -98,21 +104,26 @@ function Products() {
 
 
     const HandleUpdate = (e) => {
+        
         e.preventDefault();
 
-        axios.post(`http://localhost:2022/admin/product/update/${UpdateId}`,Product).then((data) => {
+        axios.post(`http://localhost:2022/admin/product/update/${UpdateId}`, Product).then((data) => {
             console.log(data)
 
-            if(data.data.status === 1) {
+            if (data.data.status === 1) {
                 alert(data.data.message)
                 GetProductData();
             }
-            else{
+            else {
                 alert("Product Doesn't Update")
             }
         })
     }
 
+
+    const indexOfLastPage = page * postPerPage;
+    const indexOfFirstPage = indexOfLastPage - postPerPage;
+    const currentPost = ProductData.slice(indexOfFirstPage, indexOfLastPage)
 
     return (
         <div>
@@ -130,9 +141,23 @@ function Products() {
             <div className='container'>
                 <div class="row">
                     <div className='center style6'>
-                        <h4>Products</h4>
+                        <div className='row'>
+                            <div className='col s6'>
+                                <h4>Products</h4>
+                            </div>
+                            <div className="input-field col s6">
+                                <input type="text" className="validate" onChange={event => { setsearchTerm(event.target.value) }} required />
+                                <label>Search Product</label>
+                            </div>
+                        </div>
                     </div><hr />
-                    {ProductData.map((datas) => {
+                    {currentPost.filter((datas) => {
+                        if (searchTerm === "") {
+                            return datas
+                        } else if (datas.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                            return datas
+                        }
+                    }).map((datas) => {
                         return (<div>
                             <div class="col s3">
                                 <div class="card lime accent-3 z-depth-4  tooltipped" data-position="top" data-tooltip="View Our Product">
@@ -161,56 +186,65 @@ function Products() {
                                                 }}>Change</button>
                                             </div>
                                         </div>
-                                        <hr/>
+                                        <hr />
                                     </div>
                                     <div class="card-action center">
                                         <button className='btn grey modal-trigger darken-4 style5' data-target="change3" onClick={() => {
                                             setUpdateId(datas._id);
                                             setProduct({
-                                                catagroy : datas.catagroy,
-                                                name : datas.name,
-                                                prize : datas.prize,
-                                                offerprize : datas.offerprize,
+                                                catagroy: datas.catagroy,
+                                                name: datas.name,
+                                                prize: datas.prize,
+                                                offerprize: datas.offerprize,
                                             })
                                             trigg();
                                         }}>Update</button>
                                     </div>
-                                </div>
-
-                                <div id="change1" className="modal cyan lighten-3">
-                                    <form encType="multipart/form-data" >
-                                        <div className="modal-content">
-                                            <h4 className='center'>Availability</h4>
-                                            <div className="row">
-                                                <div className='col s6'>
-                                                    <p>
-                                                        <label>
-                                                            <input type="checkbox" id="dd" value= "true" onChange={(e) => setAvailability(e.target.value)} name="availability" />
-                                                            <span>Instock</span>
-                                                        </label>
-                                                    </p>
-                                                </div>
-                                                <div className='col s6'>
-                                                    <p>
-                                                        <label>
-                                                            <input type="checkbox" id="hh" value="false" onChange={(e) => setAvailability(e.target.value)} name="availability" />
-                                                            <span>Outofstock</span>
-                                                        </label>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="modal-footer cyan lighten-3">
-                                            <button type='submit' className='btn center indigo modal-close' onClick={AvailabilityUpdate} >Update</button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>)
                     })}
                 </div>
 
+                <div className='footer'>
+                    <div className='container'>
+                        <Pagination className='style9'
+                            onChange={(value) => setpage(value)}
+                            pageSize={postPerPage}
+                            total={total}
+                            current={page}
+                        />
+                    </div>
+                </div>
 
+                <div id="change1" className="modal cyan lighten-3">
+                    <form encType="multipart/form-data" >
+                        <div className="modal-content">
+                            <h4 className='center'>Availability</h4>
+                            <div className="row">
+                                <div className='col s6'>
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" id="dd" value="true" onChange={(e) => setAvailability(e.target.value)} name="availability" />
+                                            <span>Instock</span>
+                                        </label>
+                                    </p>
+                                </div>
+                                <div className='col s6'>
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" id="hh" value="false" onChange={(e) => setAvailability(e.target.value)} name="availability" />
+                                            <span>Outofstock</span>
+                                        </label>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="modal-footer cyan lighten-3">
+                            <button type='submit' className='btn center indigo modal-close' onClick={AvailabilityUpdate} >Update</button>
+                        </div>
+                    </form>
+                </div>
 
                 <div id="change2" className="modal lime accent-3 z-depth-4">
                     <form>
@@ -232,7 +266,7 @@ function Products() {
                             <div className="row">
 
                                 <div className='input-field col s6'>
-                                    <select id='catagroy' className="browser-default cyan lighten-4 style2" value={Product.catagroy} onChange ={HandleChange} name='catagroy' required>
+                                    <select id='catagroy' className="browser-default cyan lighten-4 style2" value={Product.catagroy} onChange={HandleChange} name='catagroy' required>
                                         <option >Select Catagroy</option>
                                         <option >Mobile</option>
                                         <option >Shoe</option>
@@ -240,20 +274,20 @@ function Products() {
                                     </select>
                                 </div>
                                 <div className="input-field col s6">
-                                    <input type="text" className="validate" id='name' value={Product.name} onChange ={HandleChange} name="name" required />
+                                    <input type="text" className="validate" id='name' value={Product.name} onChange={HandleChange} name="name" required />
                                     <label for="Adminpassword"></label>
                                 </div>
                             </div>
 
                             <div className="row">
                                 <div className="input-field col s12">
-                                    <input type="text" className="validate" id='prize' value={Product.prize} onChange ={HandleChange}  name="prize"  required />
+                                    <input type="text" className="validate" id='prize' value={Product.prize} onChange={HandleChange} name="prize" required />
                                     <label></label>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="input-field col s12">
-                                    <input type="text" className="validate " id='offerprize' value={Product.offerprize} onChange ={HandleChange} name="offerprize" required />
+                                    <input type="text" className="validate " id='offerprize' value={Product.offerprize} onChange={HandleChange} name="offerprize" required />
                                     <label></label>
                                 </div>
                             </div>
