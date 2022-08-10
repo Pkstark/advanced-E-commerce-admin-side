@@ -5,6 +5,7 @@ import AdminLogin from './AdminPages/AdminLogin'
 import AdminDashBoard from './AdminPages/AdminDashBoard'
 import Product from './AdminPages/Products'
 import Adduser from './AdminPages/Adduser'
+import Order from './AdminPages/Order'
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path='/admindash' element={<AdminDashBoard/>}/>
           <Route path='/product' element={<Product/>}/>
           <Route path='/adduser' element={<Adduser/>}/>
+          <Route path='/order' element={<Order/>}/>
         </Routes>
       </BrowserRouter>
     </div>

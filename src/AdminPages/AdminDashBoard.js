@@ -101,6 +101,12 @@ function AdminDashBoard() {
         e.preventDefault();
         navigate('/adduser')
     }
+
+    const user1 = (e) => {
+        e.preventDefault();
+        navigate('/order')
+    }
+
     return (
         <div>
             <nav className='orange'>
@@ -108,6 +114,7 @@ function AdminDashBoard() {
                     <a href="" className="brand-logo">DevShip</a>
                     <ul className="right">
                         <li><a href="" onClick={user}>AddUser</a></li>
+                        <li><a href="" onClick={user1}>Order</a></li>
                         <li><a href="" className='modal-trigger' data-target="change" onClick={posted}>Create Product</a></li>
                     </ul>
                 </div>
