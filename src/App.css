@@ -45,3 +45,26 @@
   justify-content: center;
   letter-spacing:100px;
 }
+.style10{
+  margin-top: 9%;
+  background-color: antiquewhite;
+  border-radius: 5px;
+}
+.style11{
+  margin-top: 9%;
+}
+.style12{
+  cursor: pointer;
+}
+.style13{
+  border: 2px solid blue;
+  border-radius: 5px;
+  transform: perspective(100px) translateX(-20px);
+  cursor: pointer;
+}
+.style14{
+  cursor: pointer;
+  border: 2px solid blue;
+  transform: perspective(100px) translateX(20px);
+  border-radius: 5px;
+}

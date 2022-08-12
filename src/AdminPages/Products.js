@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import M from 'materialize-css/dist/js/materialize.min.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Pagination } from 'antd';
+import ReactPagination from 'react-paginate';
 
 function Products() {
 
@@ -11,14 +11,13 @@ function Products() {
     const [ProductId, setProductId] = useState('')
     const [ProductUID, setProductUID] = useState('')
     const [UpdateId, setUpdateId] = useState('');
-
     const [Product, setProduct] = useState('');
 
-    const [searchTerm, setsearchTerm] = useState('');
 
-    const [total, settotal] = useState("");
-    const [page, setpage] = useState(1);
-    const [postPerPage, setpostPerPage] = useState(4);
+    const [catagroy, setcatagroy] = useState();
+    const [name, setname] = useState();
+    const [range, setrange] = useState();
+    const [PageNumber, setPageNumber] = useState(0);
 
     const navigate = useNavigate()
 
@@ -28,13 +27,19 @@ function Products() {
 
 
     const GetProductData = (e) => {
-        axios.post("http://localhost:2022/admin/products").then((data) => {
-            console.log(data);
-            setProductData(data.data)
-            settotal(data.data.length)
+
+        const pk = {
+            catagroy: catagroy,
+            search: name,
+            range: range
+        }
+        axios.post("http://localhost:2022/prize/range", pk).then((data) => {
+            console.log(data)
+            setProductData(data?.data?.response?.result)
         }).catch((err) => {
             console.log(err)
         })
+
     }
 
     const posted = (e) => {
@@ -104,7 +109,7 @@ function Products() {
 
 
     const HandleUpdate = (e) => {
-        
+
         e.preventDefault();
 
         axios.post(`http://localhost:2022/admin/product/update/${UpdateId}`, Product).then((data) => {
@@ -120,10 +125,73 @@ function Products() {
         })
     }
 
+    const V1 = 2000;
+    const V2 = 8000;
+    const V3 = 20000;
+    const V4 = 50000;
+    const V5 = 100000;
 
-    const indexOfLastPage = page * postPerPage;
-    const indexOfFirstPage = indexOfLastPage - postPerPage;
-    const currentPost = ProductData.slice(indexOfFirstPage, indexOfLastPage)
+
+    const HandlePageClick = ({ selected }) => {
+        setPageNumber(selected);
+    }
+
+    const userPerPage = 4;
+    const PageVisited = PageNumber * userPerPage;
+    const page = Math.ceil(ProductData.length / userPerPage);
+
+    const displayUsers = ProductData.slice(PageVisited, PageVisited + userPerPage).map((datas) => {
+
+
+        return (<div>
+            <div class="col s3">
+                <div class="card lime accent-3 z-depth-4  tooltipped" data-position="top" data-tooltip="View Our Product">
+                    <div class="card-image">
+                        <img src={`http://localhost:2022/${datas.photo}`} style={{ width: "300px", height: "200px" }} className='responsive-img' />
+                        <a class="btn-floating halfway-fab waves-effect orange darken-3 modal-trigger" data-target="change2" onClick={(e) => {
+                            setProductUID(datas._id)
+                            geter();
+                        }}><i class="material-icons">cancel</i></a>
+                    </div>
+                    <div class="card-content">
+
+                        <p className='style3'>Product Name :{datas.name}</p>
+                        <p className='style3'>Prize :&nbsp; Rs.&nbsp;<span className='style8'>{datas.prize}</span> /-- </p>
+                        <p className='style3'>OfferPrize :&nbsp;Rs. &nbsp;{datas.offerprize} /--</p>
+                        <p className='style3'>Discount : &nbsp;{datas.discount}&nbsp;%</p><hr />
+
+                        <div className='row'>
+                            <div className='col s6'>
+                                <p className='style3 left'>{datas.availability === "true" ? (<div style={{ color: "green" }}>Instock</div>) : (<div style={{ color: "red" }}>OutOfStock</div>)}</p>
+                            </div>
+                            <div className='col s6'>
+                                <button className='btn modal-trigger green accent-4' data-target="change1" onClick={(e) => {
+                                    setProductId(datas._id)
+                                    trigger()
+                                }}>Change</button>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                    <div class="card-action center">
+                        <button className='btn grey modal-trigger darken-4 style5' data-target="change3" onClick={() => {
+                            setUpdateId(datas._id);
+                            setProduct({
+                                catagroy: datas.catagroy,
+                                name: datas.name,
+                                prize: datas.prize,
+                                offerprize: datas.offerprize,
+                            })
+                            trigg();
+                        }}>Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>)
+
+
+    })
+
 
     return (
         <div>
@@ -139,82 +207,37 @@ function Products() {
 
 
             <div className='container'>
-                <div class="row">
-                    <div className='center style6'>
-                        <div className='row'>
-                            <div className='col s6'>
-                                <h4>Products</h4>
-                            </div>
-                            <div className="input-field col s6">
-                                <input type="text" className="validate" onChange={event => { setsearchTerm(event.target.value) }} required />
-                                <label>Search Product</label>
-                            </div>
-                        </div>
-                    </div><hr />
-                    {currentPost.filter((datas) => {
-                        if (searchTerm === "") {
-                            return datas
-                        } else if (datas.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                            return datas
-                        }
-                    }).map((datas) => {
-                        return (<div>
-                            <div class="col s3">
-                                <div class="card lime accent-3 z-depth-4  tooltipped" data-position="top" data-tooltip="View Our Product">
-                                    <div class="card-image">
-                                        <img src={`http://localhost:2022/${datas.photo}`} style={{ width: "300px", height: "200px" }} className='responsive-img' />
-                                        <a class="btn-floating halfway-fab waves-effect orange darken-3 modal-trigger" data-target="change2" onClick={(e) => {
-                                            setProductUID(datas._id)
-                                            geter();
-                                        }}><i class="material-icons">cancel</i></a>
-                                    </div>
-                                    <div class="card-content">
-
-                                        <p className='style3'>Product Name :{datas.name}</p>
-                                        <p className='style3'>Prize :&nbsp; Rs.&nbsp;<span className='style8'>{datas.prize}</span> /-- </p>
-                                        <p className='style3'>OfferPrize :&nbsp;Rs. &nbsp;{datas.offerprize} /--</p>
-                                        <p className='style3'>Discount : &nbsp;{datas.discount}&nbsp;%</p><hr />
-
-                                        <div className='row'>
-                                            <div className='col s6'>
-                                                <p className='style3 left'>{datas.availability === "true" ? (<div style={{ color: "green" }}>Instock</div>) : (<div style={{ color: "red" }}>OutOfStock</div>)}</p>
-                                            </div>
-                                            <div className='col s6'>
-                                                <button className='btn modal-trigger green accent-4' data-target="change1" onClick={(e) => {
-                                                    setProductId(datas._id)
-                                                    trigger()
-                                                }}>Change</button>
-                                            </div>
-                                        </div>
-                                        <hr />
-                                    </div>
-                                    <div class="card-action center">
-                                        <button className='btn grey modal-trigger darken-4 style5' data-target="change3" onClick={() => {
-                                            setUpdateId(datas._id);
-                                            setProduct({
-                                                catagroy: datas.catagroy,
-                                                name: datas.name,
-                                                prize: datas.prize,
-                                                offerprize: datas.offerprize,
-                                            })
-                                            trigg();
-                                        }}>Update</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>)
-                    })}
-                </div>
-
-                <div className='footer'>
-                    <div className='container'>
-                        <Pagination className='style9'
-                            onChange={(value) => setpage(value)}
-                            pageSize={postPerPage}
-                            total={total}
-                            current={page}
-                        />
+                <h5 className='center'> Products</h5>
+                <div className='row'>
+                    <div className='col s3 center'>
+                        <select id='range' className="browser-default style10" name='range' onChange={(e) => setcatagroy(e.target.value)} required>
+                            <option >Catagroy</option>
+                            <option>Mobile</option>
+                            <option>Shoe</option>
+                            <option>Shirt</option>
+                        </select>
                     </div>
+                    <div className='col s3 center'>
+                        <select id='range' className="browser-default style10" onChange={(e) => setrange(e.target.value)} name='range' required>
+                            <option >All Prices</option>
+                            <option value={V1} >less then 2000</option>
+                            <option value={V2} >less then 8000</option>
+                            <option value={V3}>less 20000</option>
+                            <option value={V4}>less 50000</option>
+                            <option value={V5}>less 100000</option>
+                        </select>
+                    </div>
+                    <div className="input-field col s3">
+                        <input type="text" className="validate" onChange={(e) => setname(e.target.value)} required />
+                        <label>Search Product</label>
+                    </div>
+                    <div className='col s3 center'>
+                        <button className='btn indigo style11' onClick={GetProductData} >search</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <hr />
+                    {displayUsers}
                 </div>
 
                 <div id="change1" className="modal cyan lighten-3">
@@ -264,7 +287,6 @@ function Products() {
                         <div className="modal-content">
                             <h4 className='center'>Update Product</h4>
                             <div className="row">
-
                                 <div className='input-field col s6'>
                                     <select id='catagroy' className="browser-default cyan lighten-4 style2" value={Product.catagroy} onChange={HandleChange} name='catagroy' required>
                                         <option >Select Catagroy</option>
@@ -299,6 +321,18 @@ function Products() {
                     </form>
                 </div>
 
+                <div className='center'>
+                    <ReactPagination
+                        previousLabel={"Prev"}
+                        pageCount={page}
+                        onPageChange={HandlePageClick}
+                        containerClassName={"pagination style12"}
+                        pageClassName={"waves-effect"}
+                        activeClassName={"active indigo"}
+                        previousLinkClassName={"style13"}
+                        nextLinkClassName={"style14"}
+                    />
+                </div>
 
             </div>
 
