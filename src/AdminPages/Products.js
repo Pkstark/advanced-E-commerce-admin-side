@@ -17,6 +17,7 @@ function Products() {
     const [catagroy, setcatagroy] = useState();
     const [name, setname] = useState();
     const [range, setrange] = useState();
+    const [Sort, setSort] = useState(false)
     const [PageNumber, setPageNumber] = useState(0);
 
     const navigate = useNavigate()
@@ -28,10 +29,13 @@ function Products() {
 
     const GetProductData = (e) => {
 
+        setSort(true);
+
         const pk = {
             catagroy: catagroy,
             search: name,
-            range: range
+            range: range,
+            order : Sort
         }
         axios.post("http://localhost:2022/prize/range", pk).then((data) => {
             console.log(data)
@@ -205,7 +209,6 @@ function Products() {
                 </div>
             </nav>
 
-
             <div className='container'>
                 <h5 className='center'> Products</h5>
                 <div className='row'>
@@ -231,7 +234,8 @@ function Products() {
                         <input type="text" className="validate" onChange={(e) => setname(e.target.value)} required />
                         <label>Search Product</label>
                     </div>
-                    <div className='col s3 center'>
+                    <div className='col s3 right'>
+                        <button className='btn indigo style11' value={Sort} onClick={GetProductData} >sort</button>&nbsp;&nbsp;
                         <button className='btn indigo style11' onClick={GetProductData} >search</button>
                     </div>
                 </div>
@@ -283,7 +287,7 @@ function Products() {
 
 
                 <div id="change3" className="modal cyan lighten-3">
-                    <form encType="multipart/form-data" >
+                    <form encType="multipart/form-data">
                         <div className="modal-content">
                             <h4 className='center'>Update Product</h4>
                             <div className="row">
