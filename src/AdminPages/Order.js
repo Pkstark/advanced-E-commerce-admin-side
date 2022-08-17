@@ -95,7 +95,7 @@ function Order() {
                     <p className='style3'>City :&nbsp;{datas.city}</p>
                     <p className='style3'>State : &nbsp;{datas.state}&nbsp;</p>
                     <p className='style3'>Pincode : &nbsp;{datas.pincode}&nbsp;</p>
-                    <p className='style3'>Phoneno : &nbsp;Rs .&nbsp;{datas.phoneno}&nbsp;</p>
+                    <p className='style3'>Phoneno : &nbsp;&nbsp;{datas.phoneno}&nbsp;</p>
                   </div>
                   <div class="col s3 ">
                     <button className='btn right style11 modal-trigger' data-target = "change" onClick={() => {
