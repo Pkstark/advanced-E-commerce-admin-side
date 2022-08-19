@@ -15,7 +15,7 @@ function Products() {
 
 
     const [catagroy, setcatagroy] = useState();
-    const [name, setname] = useState();
+    const [name, setname] = useState('');
     const [range, setrange] = useState();
     const [Sort, setSort] = useState(false)
 
@@ -137,18 +137,21 @@ function Products() {
     const V4 = 50000;
     const V5 = 100000;
 
-
     const HandlePageClick = ({ selected }) => {
         setPageNumber(selected);
     }
 
-    const userPerPage = 4;
+    const userPerPage = 10;
     const PageVisited = PageNumber * userPerPage;
     const page = Math.ceil(ProductData.length / userPerPage);
 
-    const displayUsers = ProductData.slice(PageVisited, PageVisited + userPerPage).map((datas) => {
-
-
+    const displayUsers = ProductData.filter((datas) => {
+        if(name === ""){
+          return datas
+        }else if(datas.name.toLowerCase().includes(name.toLowerCase())){
+          return datas
+        }
+      }).slice(PageVisited, PageVisited + userPerPage).map((datas) => {
         return (<div>
             <div class="col s3">
                 <div class="card lime accent-3 z-depth-4  tooltipped" data-position="top" data-tooltip="View Our Product">
