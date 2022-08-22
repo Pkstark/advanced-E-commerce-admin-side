@@ -68,3 +68,7 @@
   transform: perspective(100px) translateX(20px);
   border-radius: 5px;
 }
+.style15{
+  font-size: 20px;
+  color: orange;
+}

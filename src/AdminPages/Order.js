@@ -23,12 +23,10 @@ function Order() {
 
 
   const getData = () => {
-    const pk = {
-      email: email
-    }
-    axios.post("http://localhost:2022/order/clientdata", pk).then((data) => {
+    
+    axios.post("http://localhost:2022/order/look").then((data) => {
       console.log(data);
-      setuserData(data.data)
+      setuserData(data?.data?.Order)
     }).catch((err) => {
       console.log(err)
     })
@@ -67,12 +65,20 @@ function Order() {
 
 
       <div className='container'>
-        <h5 className='center'>Your Order Details</h5><br/>
+        <h5 className='center'>Your Client Order Details</h5><br/>
         {userData.map((datas) => {
           return (<div>
             <div className='card'>
               <div className='card-content'>
                 <div className='row s12'>
+                <div className='row'>
+                  <div className='col s4 offset-s2'>
+                  <p className=' style15'>ClientName : {datas.clientdata.first_name}</p>
+                  </div>
+                  <div className='col s4'>
+                  <p className='style15'>Email : {datas.clientdata.email}</p>
+                  </div>
+                  </div><hr/>
                   <div className='col s3 center'>
                     <img  src={`http://localhost:2022/${datas.photo}`} style={{ height: "150px", width: "150px" }} />
                   </div>
